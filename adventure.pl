@@ -1,7 +1,8 @@
-/* <The name of this game>, by <your name goes here>. */
+/* Geralt of Prolog - The Griffin Hunt, by Kacper Siemionek */
 
-:- dynamic i_am_at/1, at/2, holding/1.
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
+:- dynamic i_am_at/1, at/2, holding/1, money/1, cave_open/1, griffin_summoned/1, knowledge/1.
+:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(holding(_)), retractall(money(_)).
+:- retractall(cave_open(_)), retractall(griffin_summoned(_)), retractall(knowledge(_)).
 
 i_am_at(someplace).
 
