@@ -24,7 +24,9 @@ path(cave_entrance, e, town).
 path(cave_entrance, n, cave) :-
     boulders_open, !.
 path(cave_entrance, n, cave) :-
-    write('Big rocks block the way north. You need to move them somehow.'), nl, fail.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('Big rocks block the way north. You need to move them somehow.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl, fail.
 path(cave, s, cave_entrance).
 path(tavern, w, herbalist_hut).
 path(herbalist_hut, e, tavern).
@@ -46,17 +48,23 @@ take(X) :-
     at(X, Place), !,
     retract(at(X, Place)),
     assert(holding(X)),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You pick up the '), write(X), write('.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 take(_) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('There is nothing like that here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 buy(Item) :-
     holding(Item),
     Item \= cortinarius, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You already have one of those.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 buy(Item) :-
     (i_am_at(blacksmith) ; i_am_at(merchant)),
@@ -65,11 +73,15 @@ buy(Item) :-
     NM is M - Price,
     retract(money(M)), assert(money(NM)),
     assert(holding(Item)),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You buy the '), write(Item), write(' for '), write(Price), write(' crowns.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 buy(_) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You cannot buy that here, or you do not have enough crowns.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* prices */
@@ -94,6 +106,7 @@ examine :-
 examine(nest) :-
     i_am_at(nest),
     \+ examined_nest, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You look around the nest carefully.'), nl,
     write('You find a large feather. It must be from the griffin.'), nl,
     nl,
@@ -102,46 +115,58 @@ examine(nest) :-
     write('   to wound it.'), nl,
     write('   Wounded griffins are known to flee. Buckthorn can be used'), nl,
     write('   as bait. Hybrid oil increases damage against hybrid beasts."'), nl,
-    nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(examined_nest),
     tick,
     look.
 examine(nest) :-
     i_am_at(nest), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You already searched the nest.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 examine(hill) :-
     i_am_at(hill),
     \+ holding(white_myrtle), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You search through the grass and flowers on the hillside.'), nl,
     write('You find clusters of white myrtle growing here. You gather four'), nl,
     write('portions.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(holding(white_myrtle)), assert(holding(white_myrtle)),
     assert(holding(white_myrtle)), assert(holding(white_myrtle)),
     tick,
     look.
 examine(hill) :-
     i_am_at(hill), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You already gathered enough white myrtle.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 examine(river) :-
     i_am_at(river),
     \+ holding(buckthorn), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You search along the muddy riverbank.'), nl,
     write('You pull a plant out of the water - buckthorn. It smells strong.'), nl,
     write('It might be useful as bait.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(holding(buckthorn)),
     tick,
     look.
 examine(river) :-
     i_am_at(river), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You already took what you needed from the river.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 examine(_) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You look around but find nothing useful here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* witcher signs */
@@ -162,9 +187,11 @@ list_signs.
 open(boulders, aard) :-
     i_am_at(cave_entrance),
     \+ boulders_open, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You raise your hand and cast the Aard sign.'), nl,
     write('The rocks crack and fly apart. The cave entrance is open.'), nl,
     write('You can now go North (n) into the cave.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(boulders_open),
     tick,
     look.
@@ -172,30 +199,38 @@ open(boulders, aard) :-
 open(boulders, _) :-
     i_am_at(cave_entrance),
     boulders_open, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The path is already clear.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 open(boulders, Sign) :-
     i_am_at(cave_entrance),
     \+ boulders_open,
     witcher_sign(Sign, _), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You cast '), write(Sign), write(', but it has no effect on the heavy'), nl,
     write('boulders. You wasted time trying the wrong sign!'), nl,
     nl,
     list_signs,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 
 open(boulders, _) :-
     i_am_at(cave_entrance),
     \+ boulders_open, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You need to use a Witcher sign to clear the path. But which one?'), nl,
     nl,
     list_signs,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 open(_, _) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('Nothing happens.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* cave actions */
@@ -203,9 +238,11 @@ kill_endriagas :-
     i_am_at(cave),
     endriagas_alive,
     (holding(silver_sword) ; holding(steel_sword)), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The endriagas attack from the shadows. You fight them off one'), nl,
     write('by one. When the last one falls, you search the bodies.'), nl,
     write('You cut out a fresh embryo. It will be useful for alchemy.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     retract(endriagas_alive),
     assert(holding(embryo)),
     tick,
@@ -213,22 +250,29 @@ kill_endriagas :-
 kill_endriagas :-
     i_am_at(cave),
     endriagas_alive, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The endriagas attack from the shadows, but you have no sword!'), nl,
     write('You barely manage to escape the cave with your life.'), nl,
     write('Come back armed.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 kill_endriagas :-
     i_am_at(cave), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The endriagas are already dead.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 kill_endriagas :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('There are no endriagas here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* dialogues */
 ask(client) :-
     i_am_at(tavern), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The client looks tired and scared.'), nl,
     write('"Three nights in a row it has attacked us. Sheep, dogs, two'), nl,
     write('farmhands."'), nl,
@@ -236,27 +280,36 @@ ask(client) :-
     write('attacks again."'), nl,
     write('"I gave you 200 crowns upfront. The rest when you bring proof'), nl,
     write('of the kill."'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 ask(client) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('Your client is not here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 ask(herbalist) :-
     i_am_at(herbalist_hut), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The old woman looks up from her work.'), nl,
     write('"Hybrid oil? For that you need one dog tallow and four white'), nl,
     write('myrtle petals."'), nl,
     write('"You can brew it at my table if you have everything."'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(knows_oil),
     tick,
     look.
 ask(herbalist) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('There is no herbalist here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 ask(_) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('There is nobody by that name here.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* alchemy */
@@ -269,12 +322,16 @@ craft(hybrid_oil) :-
     retract(holding(white_myrtle)), retract(holding(white_myrtle)),
     retract(holding(white_myrtle)), retract(holding(white_myrtle)),
     assert(holding(hybrid_oil)),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You mix the ingredients at the table. The hybrid oil is ready.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 craft(hybrid_oil) :-
     i_am_at(herbalist_hut), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You need: the recipe (ask herbalist), 1x dog_tallow, 4x white_myrtle.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 craft(thunderbolt) :-
@@ -286,40 +343,54 @@ craft(thunderbolt) :-
     retract(holding(embryo)),
     retract(holding(cortinarius)), retract(holding(cortinarius)),
     assert(holding(thunderbolt)),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You follow Vesemir''s formula. The liquid turns deep blue.'), nl,
     write('Thunderbolt is ready.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     tick,
     look.
 craft(thunderbolt) :-
     i_am_at(herbalist_hut), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You need: 1x dwarven_spirit, 1x embryo, 2x cortinarius.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 craft(_) :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('Invalid item name, you do not know how to craft this, or you'), nl,
     write('are missing ingredients.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* fight preparation */
 apply_oil :-
     oil_applied, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('Your blade is already coated with oil.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 apply_oil :-
     holding(hybrid_oil),
     holding(silver_sword), !,
     assert(oil_applied),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You coat the silver blade with the hybrid oil. It should hit'), nl,
     write('harder now.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 apply_oil :-
     holding(hybrid_oil),
     holding(steel_sword), !,
     assert(oil_applied),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You coat the steel blade with the hybrid oil.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 apply_oil :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You need hybrid_oil and a sword to do this.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 place_bait :-
@@ -327,26 +398,37 @@ place_bait :-
     holding(buckthorn), !,
     retract(holding(buckthorn)),
     assert(bait_placed),
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You place the buckthorn in the center of the nest.'), nl,
     write('The strong smell drifts out on the wind. Now you wait.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 place_bait :-
     i_am_at(nest), !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You have no bait. Find something with a strong smell to lure'), nl,
     write('the griffin.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 place_bait :-
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You should be at the nest to place bait.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     look.
 
 /* fight */
+
+fight :- game_over, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('The game is over. Type "halt." to quit.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 /* Victory: silver sword + bolts + thunderbolt + oil */
 fight :-
     i_am_at(nest), bait_placed,
     holding(silver_sword), holding(bolts),
     holding(thunderbolt), oil_applied, !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives out of the sky at full speed.'), nl,
     write('You drink the Thunderbolt. Everything slows down.'), nl,
     write('You dodge and swing - the silver blade cuts deep through its hide.'), nl,
@@ -356,88 +438,102 @@ fight :-
     nl,
     write('You take the griffin''s head as proof of the kill.'), nl,
     write('Return to the tavern to collect your reward. (end_game)'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(holding(griffin_trophy)).
 
 /* Defeat: no bolts - griffin flees */
 fight :-
     i_am_at(nest), bait_placed,
     holding(silver_sword), \+ holding(bolts), !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives. You drink Thunderbolt and slash with the'), nl,
     write('silver sword. The cut is deep, but not deep enough.'), nl,
     write('The griffin screams, spreads its wings, and climbs into the sky.'), nl,
     write('You watch it disappear over the mountains.'), nl,
     write('Without a way to stop it from fleeing, the contract is failed.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     finish.
 
 /* Defeat: silver sword + bolts, but missing oil or thunderbolt */
 fight :-
     i_am_at(nest), bait_placed,
     holding(silver_sword), holding(bolts), !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives. You shoot it with a bolt and strike with'), nl,
     write('your silver blade. But without the Thunderbolt potion and'), nl,
     write('Hybrid Oil, you lack the speed and damage to finish it.'), nl,
     write('The beast overpowers you...'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     die.
 
 /* Defeat: steel sword, no real damage */
 fight :-
     i_am_at(nest), bait_placed,
     holding(steel_sword), \+ holding(silver_sword), !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives and you swing your steel sword with everything'), nl,
     write('you have. The blade bounces off its hide. Barely a scratch.'), nl,
     write('The griffin does not even flinch. It hits you like a wall.'), nl,
     write('You should have brought the right weapon for this.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     die.
 
 /* Defeat: no sword */
 fight :-
     i_am_at(nest), bait_placed,
     \+ holding(silver_sword), \+ holding(steel_sword), !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives and you have nothing to fight it with.'), nl,
     write('This was a very bad idea.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     die.
 
 /* No bait yet */
 fight :-
     i_am_at(nest), !,
-    write('The nest is empty. You need to place bait first.'), nl.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('The nest is empty. You need to place bait first.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 fight :-
-    write('You are not at the griffin''s nest.'), nl.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('You are not at the griffin''s nest.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 /* end game */
 end_game :-
     i_am_at(tavern),
     holding(griffin_trophy), !,
-    nl,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You drop the griffin''s head on the table in front of the client.'), nl,
     write('He stares at it for a long moment, then starts counting out coins.'), nl,
     write('"It is done," you say. He nods and slides the rest of the reward'), nl,
     write('across. The village is safe. Contract closed.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     finish.
 end_game :-
     i_am_at(tavern), !,
-    write('You have nothing to show the client yet.'), nl.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('You have nothing to show the client yet.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 end_game :-
-    write('You need to return to the tavern to collect your reward.'), nl.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('You need to return to the tavern to collect your reward.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 /* time and movement */
+
 tick :- game_over, !, fail.
-go(_) :- game_over, !, write('The game is over. Type "halt." to quit.'), nl.
-fight :- game_over, !, write('The game is over. Type "halt." to quit.'), nl.
 tick :-
     timer(T), T > 0, !,
     NT is T - 1,
     retract(timer(T)), assert(timer(NT)),
     (NT =:= 0 ->
-        (nl,
+        (nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
          write('You hear screaming from the direction of the village.'), nl,
          write('The griffin got tired of waiting and attacked on its own.'), nl,
          write('You were too slow. The contract is over.'), nl,
+         write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
          die)
     ; true).
 tick.
@@ -447,6 +543,10 @@ s :- go(s).
 e :- go(e).
 w :- go(w).
 
+go(_) :- game_over, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('The game is over. Type "halt." to quit.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 go(Direction) :-
     i_am_at(Here),
     path(Here, Direction, There), !,
@@ -454,7 +554,9 @@ go(Direction) :-
     assert(i_am_at(There)),
     tick, look.
 go(_) :-
-    write('You cannot go that way.'), nl.
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('You cannot go that way.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 /* look and inventory */
 look :-
