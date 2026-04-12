@@ -1,8 +1,8 @@
 /* Geralt of Prolog - The Griffin Hunt, by Kacper Siemionek */
 
-:- dynamic i_am_at/1, holding/1, money/1, timer/1, bait_placed/0, oil_applied/0, endriagas_alive/0, knows/1, boulders_open/0, examined_nest/0, game_over/0.
+:- dynamic i_am_at/1, holding/1, money/1, timer/1, bait_placed/0, oil_applied/0, endriagas_alive/0, knows/1, boulders_open/0, examined_nest/0, game_over/0, gathered_myrtle/0, gathered_buckthorn/0.
 
-:- retractall(i_am_at(_)), retractall(holding(_)), retractall(money(_)), retractall(timer(_)), retractall(endriagas_alive), retractall(knows(_)), retractall(boulders_open), retractall(examined_nest), retractall(game_over).
+:- retractall(i_am_at(_)), retractall(holding(_)), retractall(money(_)), retractall(timer(_)), retractall(endriagas_alive), retractall(knows(_)), retractall(boulders_open), retractall(examined_nest), retractall(game_over), retractall(bait_placed), retractall(oil_applied), retractall(gathered_myrtle), retractall(gathered_buckthorn).
 
 /* initialization */
 knows(thunderbolt_formula).
@@ -22,11 +22,7 @@ path(merchant, w, town).
 path(town, w, cave_entrance).
 path(cave_entrance, e, town).
 path(cave_entrance, n, cave) :-
-    boulders_open, !.
-path(cave_entrance, n, cave) :-
-    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    write('Big rocks block the way north. You need to move them somehow.'), nl,
-    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl, fail.
+    boulders_open.
 path(cave, s, cave_entrance).
 path(tavern, w, herbalist_hut).
 path(herbalist_hut, e, tavern).
@@ -113,7 +109,7 @@ examine(nest) :-
 
 examine(hill) :-
     i_am_at(hill),
-    \+ holding(white_myrtle), !,
+    \+ gathered_myrtle, !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You search through the grass and flowers on the hillside.'), nl,
     write('You find clusters of white myrtle growing here. You gather four'), nl,
@@ -121,6 +117,7 @@ examine(hill) :-
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(holding(white_myrtle)), assert(holding(white_myrtle)),
     assert(holding(white_myrtle)), assert(holding(white_myrtle)),
+    assert(gathered_myrtle),
     tick,
     look.
 examine(hill) :-
@@ -132,13 +129,14 @@ examine(hill) :-
 
 examine(river) :-
     i_am_at(river),
-    \+ holding(buckthorn), !,
+    \+ gathered_buckthorn, !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You search along the muddy riverbank.'), nl,
     write('You pull a plant out of the water - buckthorn. It smells strong.'), nl,
     write('It might be useful as bait.'), nl,
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     assert(holding(buckthorn)),
+    assert(gathered_buckthorn),
     tick,
     look.
 examine(river) :-
@@ -532,6 +530,15 @@ go(_) :- game_over, !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The game is over. Type "halt." to quit.'), nl,
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
+
+go(n) :-
+    i_am_at(cave_entrance),
+    \+ boulders_open, !,
+    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    write('Big rocks block the way north. You need to move them somehow.'), nl,
+    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
+    look.
+
 go(Direction) :-
     i_am_at(Here),
     path(Here, Direction, There), !,
@@ -727,6 +734,7 @@ start :-
     nl,
     write('You have 200 crowns upfront and 60 turns before the beast attacks'), nl,
     write('again. Vesemir gave you the Thunderbolt formula before he left.'), nl,
+    write('You need: 1x dwarven_spirit, 1x embryo, 2x cortinarius.'), nl,
     write('You carry your witcher medallion and your bestiary.'), nl,
     nl,
     write('Figure out what you need and get it done.'), nl,
