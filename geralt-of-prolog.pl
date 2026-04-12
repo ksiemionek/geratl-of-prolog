@@ -460,7 +460,7 @@ fight :-
     holding(silver_sword), holding(bolts), !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The griffin dives. You shoot it with a bolt and strike with'), nl,
-    write('your silver blade. But without the Thunderbolt potion and'), nl,
+    write('your silver blade. But without the Thunderbolt potion or'), nl,
     write('Hybrid Oil, you lack the speed and damage to finish it.'), nl,
     write('The beast overpowers you...'), nl,
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
