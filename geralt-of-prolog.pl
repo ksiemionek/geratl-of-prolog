@@ -1,8 +1,8 @@
 /* Geralt of Prolog - The Griffin Hunt, by Kacper Siemionek */
 
-:- dynamic i_am_at/1, at/2, holding/1, money/1, timer/1, bait_placed/0, oil_applied/0, knows_oil/0, endriagas_alive/0, knows/1, boulders_open/0, examined_nest/0, game_over/0.
+:- dynamic i_am_at/1, holding/1, money/1, timer/1, bait_placed/0, oil_applied/0, endriagas_alive/0, knows/1, boulders_open/0, examined_nest/0, game_over/0.
 
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(holding(_)), retractall(money(_)), retractall(timer(_)), retractall(knows_oil), retractall(endriagas_alive), retractall(knows(_)), retractall(boulders_open), retractall(examined_nest), retractall(game_over).
+:- retractall(i_am_at(_)), retractall(holding(_)), retractall(money(_)), retractall(timer(_)), retractall(endriagas_alive), retractall(knows(_)), retractall(boulders_open), retractall(examined_nest), retractall(game_over).
 
 /* initialization */
 knows(thunderbolt_formula).
@@ -42,22 +42,6 @@ path(nest, s, cliff).
 /* inventory actions */
 holding_count(Item, Count) :-
     aggregate_all(count, holding(Item), Count).
-
-take(X) :-
-    i_am_at(Place),
-    at(X, Place), !,
-    retract(at(X, Place)),
-    assert(holding(X)),
-    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    write('You pick up the '), write(X), write('.'), nl,
-    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    tick,
-    look.
-take(_) :-
-    nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    write('There is nothing like that here.'), nl,
-    write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    look.
 
 buy(Item) :-
     holding(Item),
@@ -105,7 +89,8 @@ examine :-
 
 examine(nest) :-
     i_am_at(nest),
-    \+ examined_nest, !,
+    \+ examined_nest,
+    knows(bestiary), !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('You look around the nest carefully.'), nl,
     write('You find a large feather. It must be from the griffin.'), nl,
@@ -297,7 +282,7 @@ ask(herbalist) :-
     write('myrtle petals."'), nl,
     write('"You can brew it at my table if you have everything."'), nl,
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
-    assert(knows_oil),
+    assert(knows(hybrid_oil_formula)),
     tick,
     look.
 ask(herbalist) :-
@@ -315,7 +300,7 @@ ask(_) :-
 /* alchemy */
 craft(hybrid_oil) :-
     i_am_at(herbalist_hut),
-    knows_oil,
+    knows(hybrid_oil_formula),
     holding(dog_tallow),
     holding_count(white_myrtle, C), C >= 4, !,
     retract(holding(dog_tallow)),
@@ -336,6 +321,7 @@ craft(hybrid_oil) :-
 
 craft(thunderbolt) :-
     i_am_at(herbalist_hut),
+    knows(thunderbolt_formula),
     holding(dwarven_spirit),
     holding(embryo),
     holding_count(cortinarius, C), C >= 2, !,
@@ -417,7 +403,6 @@ place_bait :-
     look.
 
 /* fight */
-
 fight :- game_over, !,
     nl, write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl,
     write('The game is over. Type "halt." to quit.'), nl,
@@ -522,8 +507,8 @@ end_game :-
     write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'), nl.
 
 /* time and movement */
-
-tick :- game_over, !, fail.
+tick :- game_over, !.
+tick :- holding(griffin_trophy), !.
 tick :-
     timer(T), T > 0, !,
     NT is T - 1,
@@ -599,8 +584,10 @@ describe(blacksmith) :-
     write('He tells you that sword prices are rising with every'), nl,
     write('passing hour because of the monster roaming nearby.'), nl,
     nl,
-    write('You can buy a silver_sword (100cr + 1cr/turn), a steel_sword'), nl,
-    write('(40cr + 1cr/turn), or bolts (30cr) here.'), nl,
+    item_price(silver_sword, SilvPrice),
+    item_price(steel_sword, SteelPrice),
+    write('You can buy a silver_sword ('), write(SilvPrice), write('cr), a steel_sword'), nl,
+    write('('), write(SteelPrice), write('cr), or bolts (30cr) here.'), nl,
     write('Exits: South (s) Town'), nl.
 
 describe(merchant) :-
@@ -641,7 +628,7 @@ describe(herbalist_hut) :-
     write('An alchemical table sits at the back. An old woman works near'), nl,
     write('the window.'), nl,
     nl,
-    (knows_oil ->
+    (knows(hybrid_oil_formula) ->
         write('The table is free. You can craft hybrid_oil or a thunderbolt'), nl,
         write('potion here.'), nl
     ;
